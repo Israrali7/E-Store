@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import {  Input  } from "antd";
-import { Link, useNavigate  } from "react-router-dom";
+import { Input } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import apiInstance from "../config/api/axios";
 
 const SignUp = () => {
     const [model, setModel] = useState({
@@ -9,9 +10,21 @@ const SignUp = () => {
         password: "",
     });
     const navigate = useNavigate()
-    const handle = ()=>{
-        console.log(model);  
-        navigate("/login")      
+    const handle = () => {
+        console.log(model);
+        apiInstance.post('auth/signUp', model)
+            .then((res) => {
+                if (res.data.isSuccefull) {
+                    alert('User created successfully');
+                    navigate("/login")
+                } else {
+                    alert(res.data.error);
+                }
+            })
+            .catch((error) => {
+                console.error('There was an error!', error);
+                alert('Error creating user');
+            });
     }
 
     return (
@@ -25,7 +38,7 @@ const SignUp = () => {
                 <Input
                     type="text"
                     placeholder="Name"
-                    onChange={(e) => setModel({ ...model, userName: e.target.value })}
+                    onChange={(e) => setModel({ ...model, name: e.target.value })}
                     className="rounded-md mb-3 shadow-sm focus:ring-2 focus:ring-blue-400"
                     required
                 />
